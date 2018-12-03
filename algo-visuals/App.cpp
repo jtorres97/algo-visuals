@@ -1,4 +1,4 @@
-#include "App.h"
+﻿#include "App.h"
 #include "Log.h"
 
 namespace {
@@ -85,7 +85,8 @@ void App::ProcessEvents()
 			else if (event.key.code == sf::Keyboard::S && !m_isSorted)
 			{
 				LOG_INFO("Performing Selection sort...");
-				// TODO: Implement Selection sort
+				m_sorter.SelectionSort(m_array);
+				m_isSorted = true;
 			}
 			break;
 		case sf::Event::Closed:

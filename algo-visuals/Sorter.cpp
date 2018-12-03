@@ -22,7 +22,7 @@ Sorter::Sorter(sf::Uint32 width, sf::Uint32 height, sf::RenderWindow *outputTarg
 {
 }
 
-// Worst and Average Case Time Complexity : O(nï¿½). Worst case occurs when array is reverse sorted.
+// Worst and Average Case Time Complexity : O(n²). Worst case occurs when array is reverse sorted.
 // Best Case Time Complexity : O(n). Best case occurs when array is already sorted.
 // Auxiliary Space : O(1)
 // Boundary Cases : Bubble sort takes minimum time(Order of n) when elements are already sorted.
@@ -60,17 +60,42 @@ void Sorter::BubbleSort(std::vector<int> &vec)
 	while (isSwapped);
 }
 
-void Sorter::Swap(std::vector<int> &vec, int previous, int next)
+// Time Complexity : O(n²) as there are two nested loops.
+// Auxiliary Space : O(1)
+// The good thing about selection sort is it never makes more than O(n) swaps and can be useful when memory write is a costly operation.
+// Stability : The default implementation is not stable. However it can be made stable. 
+// In Place : Yes, it does not require extra space
+void Sorter::SelectionSort(std::vector<int>& vec)
 {
-	int temp = vec[previous];
-	vec[previous] = vec[next];
-	vec[next] = temp;
+	// Var to store the index of min value in each iteration
+	int minIndex;
 
-	UpdateSortingVector(vec, previous, next);
-	Sleep(50);
+	// Interate until the n-1 elements
+	for (int i = 0; i < vec.size() - 1; ++i)
+	{
+		// Set the first unsorted element as the min value
+		minIndex = i;
+
+		// Iterate through the unsorted elements only
+		for (int j = i + 1; j < vec.size(); ++j)
+		{
+			// Set the new min value, if the saved min value is higher than current 
+			// index value
+			if (vec[j] > vec[minIndex])
+			{
+				minIndex = j;
+			}
+			UpdateElements(vec, i, j);
+			Sleep();
+		}
+		// Swap the first unsorted element with the min value
+		//Swap(vec, i, minIndex);
+		auto swapWithMin = MakeSwap(vec, i, minIndex);
+		swapWithMin();
+	}
 }
 
-void Sorter::UpdateSortingVector(std::vector<int> &vec, int previous, int next)
+void Sorter::UpdateElements(std::vector<int> &vec, int previous, int next)
 {
 	// Renders the updated array to the screen
 	sf::RectangleShape currentRect((sf::Vector2f(static_cast<float>(m_width) / static_cast<float>(vec.size()), m_height)));
@@ -107,7 +132,7 @@ void Sorter::Shuffle(std::vector<int>& vec)
 	std::shuffle(vec.begin(), vec.end(), randomGenerator);
 }
 
-void Sorter::Sleep(sf::Uint32(time))
+void Sorter::Sleep()
 {
-	std::this_thread::sleep_for(std::chrono::milliseconds(time));
+	std::this_thread::sleep_for(std::chrono::milliseconds(s_sleepMsTime));
 }
