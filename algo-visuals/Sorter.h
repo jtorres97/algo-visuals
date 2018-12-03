@@ -17,7 +17,7 @@ public:
 	void BubbleSort(std::vector<int>& vec);
 
 	// Utility functions
-	void Swap(std::vector<int> &vec, int previous, int next);
+	auto MakeSwap(std::vector<int> &vec, int previous, int next);
 	void UpdateSortingVector(std::vector<int> &vec, int previous, int next);
 	void Shuffle(std::vector<int> &vec);
 	void Sleep(sf::Uint32(time));

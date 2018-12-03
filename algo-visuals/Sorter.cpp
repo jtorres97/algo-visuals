@@ -1,6 +1,20 @@
 #include "Sorter.h"
 #include "Log.h"
 
+namespace {
+	const sf::Uint32 s_sleepMsTime = 30;
+}
+
+auto Sorter::MakeSwap(std::vector<int> &vec, int previous, int next)
+{
+	return [this, &vec, previous, next]()
+	{
+		std::swap(vec[previous], vec[next]);
+		UpdateElements(vec, previous, next);
+		Sleep();
+	};
+}
+
 Sorter::Sorter(sf::Uint32 width, sf::Uint32 height, sf::RenderWindow *outputTarget)
 	: m_width(width)
 	, m_height(height)
@@ -32,7 +46,9 @@ void Sorter::BubbleSort(std::vector<int> &vec)
 		{
 			if (vec[i] < vec[i + 1])
 			{
-				Swap(vec, i, i + 1);
+				auto swap = MakeSwap(vec, i, i + 1);
+				swap();
+
 				isSwapped = true;
 			}
 		}
