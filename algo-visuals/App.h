@@ -25,5 +25,7 @@ private:
 	std::vector<int> m_bars;
 	bool m_isSorted;
 	Sorter m_sorter;
+	sf::Text m_text;
+	sf::Font m_font;
 };
 

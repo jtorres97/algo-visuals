@@ -6,11 +6,20 @@ namespace {
 	sf::Uint32 s_screenHeight = 540;
 }
 
+template<typename Resource>
+void CenterOrigin(Resource & resource)
+{
+	sf::FloatRect bounds = resource.getLocalBounds();
+	resource.setOrigin(std::floor(bounds.left + bounds.width / 2.f), std::floor(bounds.top + bounds.height / 2.f));
+}
+
 App::App()
 	: m_mainWindow(sf::VideoMode(s_screenWidth, s_screenHeight), "Sorting Visuals", sf::Style::Titlebar | sf::Style::Close)
 	, m_sorter(s_screenWidth, s_screenHeight, &m_mainWindow)
 	, m_isSorted(false)
 	, m_bars(NUM_BARS)
+	, m_text()
+	, m_font()
 {
 	// Enable V-Sync
 	m_mainWindow.setVerticalSyncEnabled(true);
@@ -25,7 +34,18 @@ App::App()
 	// Shuffle the array
 	std::random_device rd;
 	std::mt19937 randomGenerator(rd());
-	std::shuffle(m_bars.begin(), m_bars.end(), randomGenerator);
+	// Load font
+	if (!m_font.loadFromFile("res/fonts/Open 24 Display St.ttf"))
+		LOG_WARNING("Failed to load font!");
+
+	// Set font properties
+	m_text.setFont(m_font);
+	m_text.setStyle(sf::Text::Bold);
+	m_text.setCharacterSize(20);
+	m_text.setOutlineThickness(2.f);
+	m_text.setFillColor(sf::Color::Green);
+	m_text.setPosition(s_screenWidth * 0.4f, 50.f);
+	CenterOrigin(m_text);
 }
 
 App::~App()
@@ -74,7 +94,21 @@ void App::ProcessEvents()
 
 void App::Update()
 {
-
+	if (!m_isSorted)
+	{
+		std::string str = "Choose your sort!";
+		m_text.setString(str 
+			+ "\nB - Bubble Sort"
+			+ "\nS - Selection Sort"
+		);
+	}
+	if (m_isSorted)
+	{
+		std::string str = "Bars are sorted!";
+		m_text.setString(str 
+			+ "\n\nPress R to shuffle the bars"
+		);
+	}
 }
 
 void App::Render()
