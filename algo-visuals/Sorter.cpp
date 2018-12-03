@@ -8,7 +8,7 @@ Sorter::Sorter(sf::Uint32 width, sf::Uint32 height, sf::RenderWindow *outputTarg
 {
 }
 
-// Worst and Average Case Time Complexity : O(n²). Worst case occurs when array is reverse sorted.
+// Worst and Average Case Time Complexity : O(nï¿½). Worst case occurs when array is reverse sorted.
 // Best Case Time Complexity : O(n). Best case occurs when array is already sorted.
 // Auxiliary Space : O(1)
 // Boundary Cases : Bubble sort takes minimum time(Order of n) when elements are already sorted.
@@ -50,11 +50,11 @@ void Sorter::Swap(std::vector<int> &vec, int previous, int next)
 	vec[previous] = vec[next];
 	vec[next] = temp;
 
-	Render(vec, previous, next);
+	UpdateSortingVector(vec, previous, next);
 	Sleep(50);
 }
 
-void Sorter::Render(std::vector<int> &vec, int previous, int next)
+void Sorter::UpdateSortingVector(std::vector<int> &vec, int previous, int next)
 {
 	// Renders the updated array to the screen
 	sf::RectangleShape currentRect((sf::Vector2f(static_cast<float>(m_width) / static_cast<float>(vec.size()), m_height)));
@@ -64,9 +64,16 @@ void Sorter::Render(std::vector<int> &vec, int previous, int next)
 		currentRect.setOutlineColor(sf::Color::Black);
 		currentRect.setOutlineThickness(1.5);
 
-		if (i == previous) currentRect.setFillColor(sf::Color::Green);
-		if (i == next) currentRect.setFillColor(sf::Color::Red);
+		if (i == previous)
+		{
+			currentRect.setFillColor(sf::Color::Green);
+			
+		}
 
+		if (i == next)
+		{
+			currentRect.setFillColor(sf::Color::Red);
+		}
 		currentRect.setPosition(i * currentRect.getSize().x, vec[i]);
 
 		m_target->draw(currentRect);
@@ -75,6 +82,13 @@ void Sorter::Render(std::vector<int> &vec, int previous, int next)
 	// Displays and clears the newly drawn array
 	m_target->display();
 	m_target->clear();
+}
+
+void Sorter::Shuffle(std::vector<int>& vec)
+{
+	std::random_device rd;
+	std::mt19937 randomGenerator(rd());
+	std::shuffle(vec.begin(), vec.end(), randomGenerator);
 }
 
 void Sorter::Sleep(sf::Uint32(time))

@@ -17,7 +17,7 @@ App::App()
 	: m_mainWindow(sf::VideoMode(s_screenWidth, s_screenHeight), "Sorting Visuals", sf::Style::Titlebar | sf::Style::Close)
 	, m_sorter(s_screenWidth, s_screenHeight, &m_mainWindow)
 	, m_isSorted(false)
-	, m_bars(NUM_BARS)
+	, m_array(NUM_BARS)
 	, m_text()
 	, m_font()
 {
@@ -25,15 +25,15 @@ App::App()
 	m_mainWindow.setVerticalSyncEnabled(true);
 	
 	// Initialze the bars array
-	for (int i = 0; i < m_bars.size(); i++)
+	for (int i = 0; i < m_array.size(); i++)
 	{
-		m_bars[i] = s_screenHeight - (s_screenHeight / m_bars.size()) * i;
-		LOG_DEBUG("Bar " << i << ": " << m_bars[i]);
+		m_array[i] = s_screenHeight - (s_screenHeight / m_array.size()) * i;
+		LOG_DEBUG("Bar " << i << ": " << m_array[i]);
 	}
 
 	// Shuffle the array
-	std::random_device rd;
-	std::mt19937 randomGenerator(rd());
+	m_sorter.Shuffle(m_array);
+
 	// Load font
 	if (!m_font.loadFromFile("res/fonts/Open 24 Display St.ttf"))
 		LOG_WARNING("Failed to load font!");
@@ -70,19 +70,22 @@ void App::ProcessEvents()
 		switch (event.type)
 		{
 		case sf::Event::KeyPressed:
-			if (event.key.code == sf::Keyboard::S && m_isSorted)
+			if (event.key.code == sf::Keyboard::R && m_isSorted)
 			{
-				LOG_INFO("Shuffling bars...");
-				std::random_device rd;
-				std::mt19937 randomGenerator(rd());
-				std::shuffle(m_bars.begin(), m_bars.end(), randomGenerator);
+				LOG_INFO("Shuffling...");
+				m_sorter.Shuffle(m_array);
 				m_isSorted = false;
 			}
 			else if (event.key.code == sf::Keyboard::B && !m_isSorted)
 			{
-				LOG_INFO("Performing Bubble Sort on bars...");
-				m_sorter.BubbleSort(m_bars);
+				LOG_INFO("Performing Bubble Sort...");
+				m_sorter.BubbleSort(m_array);
 				m_isSorted = true;
+			}
+			else if (event.key.code == sf::Keyboard::S && !m_isSorted)
+			{
+				LOG_INFO("Performing Selection sort...");
+				// TODO: Implement Selection sort
 			}
 			break;
 		case sf::Event::Closed:
@@ -115,15 +118,17 @@ void App::Render()
 {
 	m_mainWindow.clear();
 
-	sf::RectangleShape currentRect((sf::Vector2f(s_screenWidth / m_bars.size(), s_screenHeight)));
-	for (int i = 0; i < m_bars.size(); i++)
+	sf::RectangleShape currentRect((sf::Vector2f(s_screenWidth / m_array.size(), s_screenHeight)));
+	for (int i = 0; i < m_array.size(); i++)
 	{
 		currentRect.setFillColor(sf::Color::White);
 		currentRect.setOutlineColor(sf::Color::Black);
 		currentRect.setOutlineThickness(1.5);
-		currentRect.setPosition(i * currentRect.getSize().x, m_bars[i]);
+		currentRect.setPosition(i * currentRect.getSize().x, m_array[i]);
 		m_mainWindow.draw(currentRect);
 	}
+
+	m_mainWindow.draw(m_text);
 
 	m_mainWindow.display();
 }

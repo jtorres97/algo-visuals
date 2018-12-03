@@ -3,8 +3,6 @@
 #include <SFML\Graphics.hpp>
 
 #include <vector>
-#include <algorithm>
-#include <random>
 
 #include "Sorter.h"
 
@@ -22,7 +20,7 @@ public:
 	void Render();
 private:
 	sf::RenderWindow m_mainWindow;
-	std::vector<int> m_bars;
+	std::vector<int> m_array;
 	bool m_isSorted;
 	Sorter m_sorter;
 	sf::Text m_text;

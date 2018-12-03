@@ -5,6 +5,8 @@
 #include <chrono>
 #include <thread>
 #include <vector>
+#include <algorithm>
+#include <random>
 
 class Sorter
 {
@@ -16,7 +18,8 @@ public:
 
 	// Utility functions
 	void Swap(std::vector<int> &vec, int previous, int next);
-	void Render(std::vector<int> &vec, int previous, int next);
+	void UpdateSortingVector(std::vector<int> &vec, int previous, int next);
+	void Shuffle(std::vector<int> &vec);
 	void Sleep(sf::Uint32(time));
 private:
 	sf::Uint32 m_width;
