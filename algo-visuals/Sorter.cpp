@@ -23,10 +23,8 @@ auto Sorter::Swap(std::vector<int> &arr, int previous, int next, bool usingStdSw
 	};
 }
 
-Sorter::Sorter(sf::Uint32 width, sf::Uint32 height, sf::RenderWindow *outputTarget)
-	: m_width(width)
-	, m_height(height)
-	, m_target(outputTarget)
+Sorter::Sorter(sf::RenderWindow *outputTarget)
+	: m_target(outputTarget)
 {
 }
 
@@ -201,7 +199,7 @@ void Sorter::InsertionSort(std::vector<int> &arr)
 void Sorter::UpdateElements(std::vector<int> &arr, int previous, int next)
 {
 	// Renders the updated array to the screen
-	sf::RectangleShape currentRect((sf::Vector2f(static_cast<float>(m_width) / static_cast<float>(arr.size()), m_height)));
+	sf::RectangleShape currentRect((sf::Vector2f(static_cast<float>(m_target->getSize().x) / static_cast<float>(arr.size()), m_target->getSize().y)));
 	for (int i = 0; i < arr.size(); i++)
 	{
 		currentRect.setFillColor(sf::Color::White);

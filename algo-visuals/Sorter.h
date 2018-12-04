@@ -11,7 +11,7 @@
 class Sorter
 {
 public:
-	explicit Sorter(sf::Uint32 width, sf::Uint32 height, sf::RenderWindow *outputTarget);
+	explicit Sorter(sf::RenderWindow *outputTarget);
 
 	// Sorting functions
 	void BubbleSort(std::vector<int> &arr);
@@ -26,8 +26,6 @@ public:
 	void Shuffle(std::vector<int> &arr);
 	void Sleep();
 private:
-	sf::Uint32 m_width;
-	sf::Uint32 m_height;
 	sf::RenderWindow *m_target;
 };
 
