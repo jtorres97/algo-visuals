@@ -1,4 +1,4 @@
-#include "App.h"
+﻿#include "App.h"
 #include "Log.h"
 
 namespace {
@@ -29,7 +29,6 @@ App::App()
 	for (int i = 0; i < m_array.size(); i++)
 	{
 		m_array[i] = s_screenHeight - (s_screenHeight / m_array.size()) * i;
-		LOG_DEBUG("Bar " << i << ": " << m_array[i]);
 	}
 
 	// Shuffle the array
@@ -71,7 +70,7 @@ void App::ProcessEvents()
 		switch (event.type)
 		{
 		case sf::Event::KeyPressed:
-			if (event.key.code == sf::Keyboard::R && m_isSorted)
+			if (event.key.code == sf::Keyboard::R)
 			{
 				LOG_INFO("Shuffling...");
 				m_sorter.Shuffle(m_array);
@@ -79,14 +78,26 @@ void App::ProcessEvents()
 			}
 			else if (event.key.code == sf::Keyboard::B && !m_isSorted)
 			{
-				LOG_INFO("Performing Bubble Sort...");
+				m_mainWindow.setTitle("Performing Bubble Sort...");
 				m_sorter.BubbleSort(m_array);
 				m_isSorted = true;
 			}
 			else if (event.key.code == sf::Keyboard::S && !m_isSorted)
 			{
-				LOG_INFO("Performing Selection sort...");
+				m_mainWindow.setTitle("Performing Selection sort...");
 				m_sorter.SelectionSort(m_array);
+				m_isSorted = true;
+			}
+			else if (event.key.code == sf::Keyboard::Q && !m_isSorted)
+			{
+				m_mainWindow.setTitle("Performing Quick sort...");
+				m_sorter.QuickSort(m_array, 0, m_array.size() - 1);
+				m_isSorted = true;
+			}
+			else if (event.key.code == sf::Keyboard::I && !m_isSorted)
+			{
+				m_mainWindow.setTitle("Performing Insertion sort...");
+				m_sorter.InsertionSort(m_array);
 				m_isSorted = true;
 			}
 			break;
@@ -102,17 +113,21 @@ void App::Update()
 	if (!m_isSorted)
 	{
 		std::string str = "Choose your sort!";
-		m_text.setString(str 
-			+ "\nB - Bubble Sort"
-			+ "\nS - Selection Sort"
+		m_mainWindow.setTitle(str);
+		m_text.setString( 
+			 "\nB - Bubble Sort"
+			 "\nS - Selection Sort"
+			 "\nQ - Quick Sort"
+			 "\nI - Insertion Sort"
 		);
+		m_text.setPosition(s_screenWidth * 0.4f, 50.f);
 	}
 	if (m_isSorted)
 	{
 		std::string str = "Bars are sorted!";
-		m_text.setString(str 
-			+ "\n\nPress R to shuffle the bars"
-		);
+		m_mainWindow.setTitle(str);
+		m_text.setString("\nPress R to shuffle the bars");
+		m_text.setPosition(s_screenWidth * 0.35f, 50.f);
 	}
 }
 
