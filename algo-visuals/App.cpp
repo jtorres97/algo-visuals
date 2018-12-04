@@ -1,9 +1,10 @@
-﻿#include "App.h"
+#include "App.h"
 #include "Log.h"
 
 namespace {
 	sf::Uint32 s_screenWidth = 800;
 	sf::Uint32 s_screenHeight = 540;
+	const int s_numElements = 25;
 }
 
 template<typename Resource>
@@ -17,7 +18,7 @@ App::App()
 	: m_mainWindow(sf::VideoMode(s_screenWidth, s_screenHeight), "Sorting Visuals", sf::Style::Titlebar | sf::Style::Close)
 	, m_sorter(s_screenWidth, s_screenHeight, &m_mainWindow)
 	, m_isSorted(false)
-	, m_array(NUM_BARS)
+	, m_array(s_numElements)
 	, m_text()
 	, m_font()
 {

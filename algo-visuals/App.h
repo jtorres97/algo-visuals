@@ -6,8 +6,6 @@
 
 #include "Sorter.h"
 
-#define NUM_BARS 50
-
 class App
 {
 public:
