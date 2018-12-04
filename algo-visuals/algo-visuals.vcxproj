@@ -124,12 +124,14 @@
     <ClCompile Include="Bars.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Sorter.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="Bars.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Sorter.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

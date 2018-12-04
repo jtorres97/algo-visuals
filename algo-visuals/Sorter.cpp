@@ -1,8 +1,9 @@
 #include "Sorter.h"
 #include "Log.h"
 
-namespace {
-	const sf::Uint32 s_sleepMsTime = 50;
+Sorter::Sorter(sf::RenderWindow *outputTarget)
+	: m_target(outputTarget)
+{
 }
 
 auto Sorter::Swap(Bars &bars, int previous, int next, bool usingStdSwap)
@@ -11,21 +12,18 @@ auto Sorter::Swap(Bars &bars, int previous, int next, bool usingStdSwap)
 	{
 		if (usingStdSwap)
 		{
+			// std::swap
 			bars.UseStdSwap(previous, next);
-			UpdateElements(bars, previous, next);
-			Sleep();
+
+			m_utils.UpdateElements(bars, previous, next, *m_target);
+			m_utils.Sleep();
 		}
 		else
 		{
-			UpdateElements(bars, previous, next);
-			Sleep();
+			m_utils.UpdateElements(bars, previous, next, *m_target);
+			m_utils.Sleep();
 		}
 	};
-}
-
-Sorter::Sorter(sf::RenderWindow *outputTarget)
-	: m_target(outputTarget)
-{
 }
 
 /*
@@ -197,35 +195,6 @@ void Sorter::InsertionSort(Bars &bars)
 	}
 }
 
-void Sorter::UpdateElements(Bars &bars, int previous, int next)
-{
-	// Renders the updated array to the screen
-	sf::RectangleShape currentRect((sf::Vector2f(static_cast<float>(m_target->getSize().x) / static_cast<float>(bars.Size()), m_target->getSize().y)));
-	for (int i = 0; i < bars.Size(); i++)
-	{
-		currentRect.setFillColor(sf::Color::White);
-		currentRect.setOutlineColor(sf::Color::Black);
-		currentRect.setOutlineThickness(1.5);
-
-		if (i == previous)
-		{
-			currentRect.setFillColor(sf::Color::Green);			
-		}
-
-		if (i == next)
-		{
-			currentRect.setFillColor(sf::Color::Red);
-		}
-		currentRect.setPosition(i * currentRect.getSize().x, bars.At(i));
-
-		m_target->draw(currentRect);
-	}
-
-	// Displays and clears the newly drawn array
-	m_target->display();
-	m_target->clear();
-}
-
 int Sorter::Partition(Bars &bars, int startIndex, int endIndex)
 {
 	// Set the first item as pivot
@@ -257,9 +226,4 @@ int Sorter::Partition(Bars &bars, int startIndex, int endIndex)
 
 	// Return the index of pivot to be used by next quicksort
 	return middleIndex;
-}
-
-void Sorter::Sleep()
-{
-	std::this_thread::sleep_for(std::chrono::milliseconds(s_sleepMsTime));
 }
