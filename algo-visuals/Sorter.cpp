@@ -2,16 +2,24 @@
 #include "Log.h"
 
 namespace {
-	const sf::Uint32 s_sleepMsTime = 30;
+	const sf::Uint32 s_sleepMsTime = 50;
 }
 
-auto Sorter::MakeSwap(std::vector<int> &vec, int previous, int next)
+auto Sorter::Swap(std::vector<int> &arr, int previous, int next, bool usingStdSwap)
 {
-	return [this, &vec, previous, next]()
+	return [this, &arr, previous, next, usingStdSwap]()
 	{
-		std::swap(vec[previous], vec[next]);
-		UpdateElements(vec, previous, next);
-		Sleep();
+		if (usingStdSwap)
+		{
+			std::swap(arr[previous], arr[next]);
+			UpdateElements(arr, previous, next);
+			Sleep();
+		}
+		else
+		{
+			UpdateElements(arr, previous, next);
+			Sleep();
+		}
 	};
 }
 
@@ -22,7 +30,7 @@ Sorter::Sorter(sf::Uint32 width, sf::Uint32 height, sf::RenderWindow *outputTarg
 {
 }
 
-// Worst and Average Case Time Complexity : O(n²). Worst case occurs when array is reverse sorted.
+// Worst and Average Case Time Complexity : O(nï¿½). Worst case occurs when array is reverse sorted.
 // Best Case Time Complexity : O(n). Best case occurs when array is already sorted.
 // Auxiliary Space : O(1)
 // Boundary Cases : Bubble sort takes minimum time(Order of n) when elements are already sorted.
@@ -60,7 +68,7 @@ void Sorter::BubbleSort(std::vector<int> &vec)
 	while (isSwapped);
 }
 
-// Time Complexity : O(n²) as there are two nested loops.
+// Time Complexity : O(nï¿½) as there are two nested loops.
 // Auxiliary Space : O(1)
 // The good thing about selection sort is it never makes more than O(n) swaps and can be useful when memory write is a costly operation.
 // Stability : The default implementation is not stable. However it can be made stable. 
