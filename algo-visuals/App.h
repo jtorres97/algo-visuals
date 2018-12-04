@@ -2,9 +2,8 @@
 
 #include <SFML\Graphics.hpp>
 
-#include <vector>
-
 #include "Sorter.h"
+#include "Bars.h"
 
 class App
 {
@@ -18,9 +17,8 @@ public:
 	void Render();
 private:
 	sf::RenderWindow m_mainWindow;
-	std::vector<int> m_array;
-	bool m_isSorted;
 	Sorter m_sorter;
+	Bars m_bars;
 	sf::Text m_text;
 	sf::Font m_font;
 };

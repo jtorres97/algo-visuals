@@ -15,24 +15,14 @@ void CenterOrigin(Resource & resource)
 }
 
 App::App()
-	: m_mainWindow(sf::VideoMode(s_screenWidth, s_screenHeight), "Sorting Visuals", sf::Style::Titlebar | sf::Style::Close)
-	, m_sorter(s_screenWidth, s_screenHeight, &m_mainWindow)
-	, m_isSorted(false)
-	, m_array(s_numElements)
+	: m_mainWindow(sf::VideoMode(s_screenWidth, s_screenHeight), "Algorithms Visualized", sf::Style::Titlebar | sf::Style::Close)
+	, m_sorter(&m_mainWindow)
 	, m_text()
 	, m_font()
+	, m_bars(s_screenWidth, s_screenHeight, s_numElements)
 {
 	// Enable V-Sync
 	m_mainWindow.setVerticalSyncEnabled(true);
-	
-	// Initialze the bars array
-	for (int i = 0; i < m_array.size(); i++)
-	{
-		m_array[i] = s_screenHeight - (s_screenHeight / m_array.size()) * i;
-	}
-
-	// Shuffle the array
-	m_sorter.Shuffle(m_array);
 
 	// Load font
 	if (!m_font.loadFromFile("res/fonts/Open 24 Display St.ttf"))
@@ -73,32 +63,32 @@ void App::ProcessEvents()
 			if (event.key.code == sf::Keyboard::R)
 			{
 				LOG_INFO("Shuffling...");
-				m_sorter.Shuffle(m_array);
-				m_isSorted = false;
+				m_bars.Shuffle();
+				m_bars.SetSortStatus(false);
 			}
-			else if (event.key.code == sf::Keyboard::B && !m_isSorted)
+			else if (event.key.code == sf::Keyboard::B && !m_bars.IsSorted())
 			{
 				m_mainWindow.setTitle("Performing Bubble Sort...");
-				m_sorter.BubbleSort(m_array);
-				m_isSorted = true;
+				m_sorter.BubbleSort(m_bars);
+				m_bars.SetSortStatus(true);
 			}
-			else if (event.key.code == sf::Keyboard::S && !m_isSorted)
+			else if (event.key.code == sf::Keyboard::S && !m_bars.IsSorted())
 			{
 				m_mainWindow.setTitle("Performing Selection sort...");
-				m_sorter.SelectionSort(m_array);
-				m_isSorted = true;
+				m_sorter.SelectionSort(m_bars);
+				m_bars.SetSortStatus(true);
 			}
-			else if (event.key.code == sf::Keyboard::Q && !m_isSorted)
+			else if (event.key.code == sf::Keyboard::Q && !m_bars.IsSorted())
 			{
 				m_mainWindow.setTitle("Performing Quick sort...");
-				m_sorter.QuickSort(m_array, 0, m_array.size() - 1);
-				m_isSorted = true;
+				m_sorter.QuickSort(m_bars, 0, m_bars.Size() - 1);
+				m_bars.SetSortStatus(true);
 			}
-			else if (event.key.code == sf::Keyboard::I && !m_isSorted)
+			else if (event.key.code == sf::Keyboard::I && !m_bars.IsSorted())
 			{
 				m_mainWindow.setTitle("Performing Insertion sort...");
-				m_sorter.InsertionSort(m_array);
-				m_isSorted = true;
+				m_sorter.InsertionSort(m_bars);
+				m_bars.SetSortStatus(true);
 			}
 			break;
 		case sf::Event::Closed:
@@ -110,7 +100,7 @@ void App::ProcessEvents()
 
 void App::Update()
 {
-	if (!m_isSorted)
+	if (!m_bars.IsSorted())
 	{
 		std::string str = "Choose your sort!";
 		m_mainWindow.setTitle(str);
@@ -122,7 +112,7 @@ void App::Update()
 		);
 		m_text.setPosition(s_screenWidth * 0.4f, 50.f);
 	}
-	if (m_isSorted)
+	if (m_bars.IsSorted())
 	{
 		std::string str = "Bars are sorted!";
 		m_mainWindow.setTitle(str);
@@ -135,13 +125,13 @@ void App::Render()
 {
 	m_mainWindow.clear();
 
-	sf::RectangleShape currentRect((sf::Vector2f(s_screenWidth / m_array.size(), s_screenHeight)));
-	for (int i = 0; i < m_array.size(); i++)
+	sf::RectangleShape currentRect((sf::Vector2f(s_screenWidth / m_bars.Size(), s_screenHeight)));
+	for (int i = 0; i < m_bars.Size(); i++)
 	{
 		currentRect.setFillColor(sf::Color::White);
 		currentRect.setOutlineColor(sf::Color::Black);
 		currentRect.setOutlineThickness(1.5);
-		currentRect.setPosition(i * currentRect.getSize().x, m_array[i]);
+		currentRect.setPosition(i * currentRect.getSize().x, m_bars.At(i));
 		m_mainWindow.draw(currentRect);
 	}
 

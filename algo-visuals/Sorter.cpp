@@ -5,19 +5,19 @@ namespace {
 	const sf::Uint32 s_sleepMsTime = 50;
 }
 
-auto Sorter::Swap(std::vector<int> &arr, int previous, int next, bool usingStdSwap)
+auto Sorter::Swap(Bars &bars, int previous, int next, bool usingStdSwap)
 {
-	return [this, &arr, previous, next, usingStdSwap]()
+	return [this, &bars, previous, next, usingStdSwap]()
 	{
 		if (usingStdSwap)
 		{
-			std::swap(arr[previous], arr[next]);
-			UpdateElements(arr, previous, next);
+			bars.UseStdSwap(previous, next);
+			UpdateElements(bars, previous, next);
 			Sleep();
 		}
 		else
 		{
-			UpdateElements(arr, previous, next);
+			UpdateElements(bars, previous, next);
 			Sleep();
 		}
 	};
@@ -41,13 +41,13 @@ Sorter::Sorter(sf::RenderWindow *outputTarget)
 
 	Stable: Yes
 */
-void Sorter::BubbleSort(std::vector<int> &arr)
+void Sorter::BubbleSort(Bars &bars)
 {
 	// Flag for swapping element
 	bool isSwapped;
 
 	// The value will be decreased every time one element has been sorted
-	int unsortedElements = arr.size();
+	int unsortedElements = bars.Size();
 
 	do
 	{
@@ -57,9 +57,9 @@ void Sorter::BubbleSort(std::vector<int> &arr)
 		// Iterate through the array's element
 		for (int i = 0; i < unsortedElements - 1; i++)
 		{
-			if (arr[i] < arr[i + 1])
+			if (bars.At(i) < bars.At(i + 1))
 			{
-				auto swap = Swap(arr, i, i + 1, true);
+				auto swap = Swap(bars, i, i + 1, true);
 				swap();
 
 				isSwapped = true;
@@ -83,31 +83,31 @@ void Sorter::BubbleSort(std::vector<int> &arr)
 
 	In Place: Yes, it does not require extra space.
 */
-void Sorter::SelectionSort(std::vector<int>& arr)
+void Sorter::SelectionSort(Bars &bars)
 {
 	// Var to store the index of min value in each iteration
 	int minIndex;
 
 	// Interate until the n-1 elements
-	for (int i = 0; i < arr.size() - 1; ++i)
+	for (int i = 0; i < bars.Size() - 1; ++i)
 	{
 		// Set the first unsorted element as the min value
 		minIndex = i;
 
 		// Iterate through the unsorted elements only
-		for (int j = i + 1; j < arr.size(); ++j)
+		for (int j = i + 1; j < bars.Size(); ++j)
 		{
 			// Set the new min value, if the saved min value is higher than current 
 			// index value
-			if (arr[j] > arr[minIndex])
+			if (bars.At(j) > bars.At(minIndex))
 			{
 				minIndex = j;
 			}
-			auto setNewMin = Swap(arr, i, j, false);
+			auto setNewMin = Swap(bars, i, j, false);
 			setNewMin();
 		}
 		// Swap the first unsorted element with the min value
-		auto swapWithMin = Swap(arr, i, minIndex, true);
+		auto swapWithMin = Swap(bars, i, minIndex, true);
 		swapWithMin();
 	}
 }
@@ -129,20 +129,20 @@ void Sorter::SelectionSort(std::vector<int>& arr)
 
 	Stable: No, can be made stable by considering indexes as comparison parameter.
 */
-void Sorter::QuickSort(std::vector<int>& arr, int startIndex, int endIndex)
+void Sorter::QuickSort(Bars &bars, int startIndex, int endIndex)
 {
 	// Only perform sort process if the end index is higher than start index
 	if (startIndex < endIndex)
 	{
 		// Retrieve pivot position from Partition(), this pivot index is the index
 		// of element that is already in correct position
-		int pivotIndex = Partition(arr, startIndex, endIndex);
+		int pivotIndex = Partition(bars, startIndex, endIndex);
 
 		// Sort left sublist arr[startIndex ... pivotIndex - 1]
-		QuickSort(arr, startIndex, pivotIndex - 1);
+		QuickSort(bars, startIndex, pivotIndex - 1);
 
 		// Sort right sublist arr[pivotIndex + 1 ... endIndex]
-		QuickSort(arr, pivotIndex + 1, endIndex);
+		QuickSort(bars, pivotIndex + 1, endIndex);
 	}
 }
 
@@ -160,13 +160,13 @@ void Sorter::QuickSort(std::vector<int>& arr, int startIndex, int endIndex)
 
 	Stable: Yes
 */
-void Sorter::InsertionSort(std::vector<int> &arr)
+void Sorter::InsertionSort(Bars &bars)
 {
 	// Iterate through all array's elements
-	for (int i = 0; i < arr.size(); ++i)
+	for (int i = 0; i < bars.Size(); ++i)
 	{
 		// Set the current element as reference value
-		int refValue = arr[i];
+		int refValue = bars.At(i);
 
 		// Var to shift the element to the right position
 		int j;
@@ -177,10 +177,11 @@ void Sorter::InsertionSort(std::vector<int> &arr)
 			// If the value of the current index is less than the reference value, then
 			// move the current value to right side.. otherwise, put the reference value in the 
 			// current index
-			if (arr[j] < refValue)
+			if (bars.At(j) < refValue)
 			{
-				arr[j + 1] = arr[j];
-				auto moveToRight = Swap(arr, i, j, false);
+				bars.Move(j + 1, j);
+
+				auto moveToRight = Swap(bars, i, j, false);
 				moveToRight();
 			}
 			else
@@ -189,18 +190,18 @@ void Sorter::InsertionSort(std::vector<int> &arr)
 			}
 		}
 		// Here's the line to put the reference value in the current index (the right position)
-		arr[j + 1] = refValue;
-		
-		auto moveRefVal = Swap(arr, i, j, false);
+		bars.Set(j + 1, refValue);
+
+		auto moveRefVal = Swap(bars, i, j, false);
 		moveRefVal();
 	}
 }
 
-void Sorter::UpdateElements(std::vector<int> &arr, int previous, int next)
+void Sorter::UpdateElements(Bars &bars, int previous, int next)
 {
 	// Renders the updated array to the screen
-	sf::RectangleShape currentRect((sf::Vector2f(static_cast<float>(m_target->getSize().x) / static_cast<float>(arr.size()), m_target->getSize().y)));
-	for (int i = 0; i < arr.size(); i++)
+	sf::RectangleShape currentRect((sf::Vector2f(static_cast<float>(m_target->getSize().x) / static_cast<float>(bars.Size()), m_target->getSize().y)));
+	for (int i = 0; i < bars.Size(); i++)
 	{
 		currentRect.setFillColor(sf::Color::White);
 		currentRect.setOutlineColor(sf::Color::Black);
@@ -215,7 +216,7 @@ void Sorter::UpdateElements(std::vector<int> &arr, int previous, int next)
 		{
 			currentRect.setFillColor(sf::Color::Red);
 		}
-		currentRect.setPosition(i * currentRect.getSize().x, arr[i]);
+		currentRect.setPosition(i * currentRect.getSize().x, bars.At(i));
 
 		m_target->draw(currentRect);
 	}
@@ -225,10 +226,10 @@ void Sorter::UpdateElements(std::vector<int> &arr, int previous, int next)
 	m_target->clear();
 }
 
-int Sorter::Partition(std::vector<int>& arr, int startIndex, int endIndex)
+int Sorter::Partition(Bars &bars, int startIndex, int endIndex)
 {
 	// Set the first item as pivot
-	int pivot = arr[startIndex];
+	int pivot = bars.At(startIndex);
 
 	// Left sublist and right sublist are initially empty
 	int middleIndex = startIndex;
@@ -236,14 +237,14 @@ int Sorter::Partition(std::vector<int>& arr, int startIndex, int endIndex)
 	// Iterate through arr[1 ... n - 1]
 	for (int i = startIndex + 1; i <= endIndex; ++i)
 	{
-		if (arr[i] > pivot)
+		if (bars.At(i) > pivot)
 		{
 			// The current item is on the left sublist, prepare a seat by shifting middle index
 			++middleIndex;
 
 			// The arr[middleIndex] is the member of right sublist, swap it to the current item 
 			// Which is member of left list
-			auto swapToCurrent = Swap(arr, i, middleIndex, true);
+			auto swapToCurrent = Swap(bars, i, middleIndex, true);
 			swapToCurrent();
 		}
 	}
@@ -251,18 +252,11 @@ int Sorter::Partition(std::vector<int>& arr, int startIndex, int endIndex)
 	// By now, the arr[middleIndex] item is member of left sublist.
 	// We can swap it with the pivot, so the pivot will be in the correct position
 	// which is between left sublist and right sublist
-	auto swapToPivot = Swap(arr, startIndex, middleIndex, true);
+	auto swapToPivot = Swap(bars, startIndex, middleIndex, true);
 	swapToPivot();
 
 	// Return the index of pivot to be used by next quicksort
 	return middleIndex;
-}
-
-void Sorter::Shuffle(std::vector<int>& arr)
-{
-	std::random_device rd;
-	std::mt19937 randomGenerator(rd());
-	std::shuffle(arr.begin(), arr.end(), randomGenerator);
 }
 
 void Sorter::Sleep()

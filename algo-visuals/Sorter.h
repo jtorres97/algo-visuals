@@ -8,22 +8,23 @@
 #include <algorithm>
 #include <random>
 
+#include "Bars.h"
+
 class Sorter
 {
 public:
 	explicit Sorter(sf::RenderWindow *outputTarget);
 
 	// Sorting functions
-	void BubbleSort(std::vector<int> &arr);
-	void SelectionSort(std::vector<int> &arr);
-	void QuickSort(std::vector<int> &arr, int startIndex, int endIndex);
-	void InsertionSort(std::vector<int> &arr);
+	void BubbleSort(Bars &bars);
+	void SelectionSort(Bars &bars);
+	void QuickSort(Bars &bars, int startIndex, int endIndex);
+	void InsertionSort(Bars &bars);
 
 	// Utility functions
-	auto Swap(std::vector<int> &arr, int previous, int next, bool usingStdSwap);
-	void UpdateElements(std::vector<int> &vec, int previous, int next);
-	int Partition(std::vector<int> &arr, int startIndex, int endIndex);
-	void Shuffle(std::vector<int> &arr);
+	auto Swap(Bars &bars, int previous, int next, bool usingStdSwap);
+	void UpdateElements(Bars &bars, int previous, int next);
+	int Partition(Bars &bars, int startIndex, int endIndex);
 	void Sleep();
 private:
 	sf::RenderWindow *m_target;
