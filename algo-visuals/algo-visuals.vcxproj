@@ -121,6 +121,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Bars.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Sorter.cpp" />
@@ -128,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Bars.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Sorter.h" />
