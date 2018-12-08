@@ -1,25 +1,22 @@
 #include "Bars.h"
 #include "Log.h"
 
-Bars::Bars(sf::Uint32 width, sf::Uint32 height, const int numElements)
-	: m_barsVec(numElements)
-	, m_sorted(false)
-	, m_width(width)
-	, m_height(height)
+Bars::Bars(sf::RenderWindow &outputTarget, const int numElements)
+	: m_sorted(false)
+	, m_target(outputTarget)
 {
 	// Initialize bars
-	for (int i = 0; i < m_barsVec.size(); i++)
+	for (auto i = 0; i < numElements; i++)
 	{
-		m_barsVec[i] = m_height - (m_height / m_barsVec.size()) * i;
+		this->push_back(WINDOW_HEIGHT - (WINDOW_HEIGHT / numElements) * i);
 	}
 
 	// Shuffle the bars
 	Shuffle();
 }
 
-std::vector<int> Bars::GetVec()
+Bars::~Bars()
 {
-	return m_barsVec;
 }
 
 void Bars::SetSortStatus(bool sorted)
@@ -29,37 +26,25 @@ void Bars::SetSortStatus(bool sorted)
 
 bool Bars::IsSorted()
 {
-	return m_sorted == true;
+	return this->m_sorted == true;
 }
 
 void Bars::Shuffle()
 {
 	std::random_device rd;
 	std::mt19937 randomGenerator(rd());
-	std::shuffle(m_barsVec.begin(), m_barsVec.end(), randomGenerator);
+	std::shuffle(this->begin(), this->end(), randomGenerator);
 }
 
-int Bars::Size()
+void Bars::Render()
 {
-	return m_barsVec.size();
-}
-
-int Bars::At(int index)
-{
-	return m_barsVec[index];
-}
-
-void Bars::Move(int index, int newDest)
-{
-	m_barsVec[index] = m_barsVec[newDest];
-}
-
-void Bars::Set(int index, int newVal)
-{
-	m_barsVec[index] = newVal;
-}
-
-void Bars::UseStdSwap(int a, int b)
-{
-	std::swap(m_barsVec[a], m_barsVec[b]);
+	sf::RectangleShape currentRect((sf::Vector2f(WINDOW_WIDTH / this->size(), WINDOW_HEIGHT)));
+	for (int i = 0; i < this->size(); i++)
+	{
+		currentRect.setFillColor(sf::Color::White);
+		currentRect.setOutlineColor(sf::Color::Black);
+		currentRect.setOutlineThickness(1.5);
+		currentRect.setPosition(i * currentRect.getSize().x, this->at(i));
+		m_target.draw(currentRect);
+	}
 }

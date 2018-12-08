@@ -6,23 +6,20 @@
 #include <algorithm>
 #include <random>
 
-class Bars 
+#include "Config.h"
+
+class Bars : public std::vector<int> 
 {
 public:
-	Bars(sf::Uint32 width, sf::Uint32 height, const int numElements);
-	std::vector<int> GetVec();
-	void SetSortStatus(bool sorted);
+	Bars(sf::RenderWindow &outputTarget, const int numElements);
+	~Bars();
+
 	bool IsSorted();
+	void SetSortStatus(bool sorted);
 	void Shuffle();
-	int Size();
-	int At(int index);
-	void Move(int index, int newDest);
-	void Set(int index, int newVal);
-	void UseStdSwap(int a, int b);
+	void Render();
 private:
-	std::vector<int> m_barsVec;
 	bool m_sorted;
-	sf::Uint32 m_width;
-	sf::Uint32 m_height;
+	sf::RenderWindow &m_target;
 };
 
