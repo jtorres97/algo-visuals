@@ -1,9 +1,13 @@
 #pragma once
 
 #include <SFML\Graphics.hpp>
+#include <SFML\Audio.hpp>
 
-#include "Sorter.h"
+#include "Sorts.h"
 #include "Bars.h"
+#include "Utils.h"
+#include "AssetManager.h"
+#include "Config.h"
 
 class App
 {
@@ -17,9 +21,9 @@ public:
 	void Render();
 private:
 	sf::RenderWindow m_mainWindow;
-	Sorter m_sorter;
+	Sorts m_sorts;
 	Bars m_bars;
+	Utils m_utils;
 	sf::Text m_text;
-	sf::Font m_font;
 };
 

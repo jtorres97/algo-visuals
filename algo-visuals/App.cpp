@@ -1,10 +1,10 @@
 ﻿#include "App.h"
 #include "Log.h"
 
+AssetManager assetManager;
+
 namespace {
-	sf::Uint32 s_screenWidth = 800;
-	sf::Uint32 s_screenHeight = 540;
-	const int s_numElements = 25;
+	const int s_numElements = 100;
 }
 
 template<typename Resource>
@@ -15,26 +15,32 @@ void CenterOrigin(Resource & resource)
 }
 
 App::App()
-	: m_mainWindow(sf::VideoMode(s_screenWidth, s_screenHeight), "Algorithms Visualized", sf::Style::Titlebar | sf::Style::Close)
-	, m_sorter(&m_mainWindow)
+	: m_mainWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Algorithms Visualized", sf::Style::Titlebar | sf::Style::Close)
+	, m_sorts(m_mainWindow)
+	, m_bars(m_mainWindow, s_numElements)
 	, m_text()
-	, m_font()
-	, m_bars(s_screenWidth, s_screenHeight, s_numElements)
 {
-	// Enable V-Sync
-	m_mainWindow.setVerticalSyncEnabled(true);
+	std::cout << R"(
+   _   _                  _ _   _                           _                 _ _             _ 
+  /_\ | | __ _  ___  _ __(_) |_| |__  _ __ ___  ___  /\   /(_)___ _   _  __ _| (_)_______  __| |
+ //_\\| |/ _` |/ _ \| '__| | __| '_ \| '_ ` _ \/ __| \ \ / / / __| | | |/ _` | | |_  / _ \/ _` |
+/  _  \ | (_| | (_) | |  | | |_| | | | | | | | \__ \  \ V /| \__ \ |_| | (_| | | |/ /  __/ (_| |
+\_/ \_/_|\__, |\___/|_|  |_|\__|_| |_|_| |_| |_|___/   \_/ |_|___/\__,_|\__,_|_|_/___\___|\__,_|
+         |___/                                                                                  
 
-	// Load font
-	if (!m_font.loadFromFile("res/fonts/Open 24 Display St.ttf"))
-		LOG_WARNING("Failed to load font!");
+--------------------------------------By: Joshua Torres-----------------------------------------
+	)" << std::endl;
+
+	// Limit FPS
+	m_mainWindow.setFramerateLimit(23);
 
 	// Set font properties
-	m_text.setFont(m_font);
+	m_text.setFont(AssetManager::GetFont("res/fonts/Open 24 Display St.ttf"));
 	m_text.setStyle(sf::Text::Bold);
 	m_text.setCharacterSize(20);
 	m_text.setOutlineThickness(2.f);
 	m_text.setFillColor(sf::Color::Green);
-	m_text.setPosition(s_screenWidth * 0.4f, 50.f);
+	m_text.setPosition(WINDOW_WIDTH * 0.4f, 50.f);
 	CenterOrigin(m_text);
 }
 
@@ -69,25 +75,25 @@ void App::ProcessEvents()
 			else if (event.key.code == sf::Keyboard::B && !m_bars.IsSorted())
 			{
 				m_mainWindow.setTitle("Performing Bubble Sort...");
-				m_sorter.BubbleSort(m_bars);
+				m_sorts.BubbleSort(m_bars);
 				m_bars.SetSortStatus(true);
 			}
 			else if (event.key.code == sf::Keyboard::S && !m_bars.IsSorted())
 			{
 				m_mainWindow.setTitle("Performing Selection sort...");
-				m_sorter.SelectionSort(m_bars);
+				m_sorts.SelectionSort(m_bars);
 				m_bars.SetSortStatus(true);
 			}
 			else if (event.key.code == sf::Keyboard::Q && !m_bars.IsSorted())
 			{
 				m_mainWindow.setTitle("Performing Quick sort...");
-				m_sorter.QuickSort(m_bars, 0, m_bars.Size() - 1);
+				m_sorts.QuickSort(m_bars, 0, m_bars.size() - 1);
 				m_bars.SetSortStatus(true);
 			}
 			else if (event.key.code == sf::Keyboard::I && !m_bars.IsSorted())
 			{
 				m_mainWindow.setTitle("Performing Insertion sort...");
-				m_sorter.InsertionSort(m_bars);
+				m_sorts.InsertionSort(m_bars);
 				m_bars.SetSortStatus(true);
 			}
 			break;
@@ -110,14 +116,14 @@ void App::Update()
 			 "\nQ - Quick Sort"
 			 "\nI - Insertion Sort"
 		);
-		m_text.setPosition(s_screenWidth * 0.4f, 50.f);
+		m_text.setPosition(WINDOW_WIDTH * 0.4f, 50.f);
 	}
 	if (m_bars.IsSorted())
 	{
 		std::string str = "Bars are sorted!";
 		m_mainWindow.setTitle(str);
 		m_text.setString("\nPress R to shuffle the bars");
-		m_text.setPosition(s_screenWidth * 0.35f, 50.f);
+		m_text.setPosition(WINDOW_WIDTH * 0.35f, 50.f);
 	}
 }
 
@@ -125,16 +131,7 @@ void App::Render()
 {
 	m_mainWindow.clear();
 
-	sf::RectangleShape currentRect((sf::Vector2f(s_screenWidth / m_bars.Size(), s_screenHeight)));
-	for (int i = 0; i < m_bars.Size(); i++)
-	{
-		currentRect.setFillColor(sf::Color::White);
-		currentRect.setOutlineColor(sf::Color::Black);
-		currentRect.setOutlineThickness(1.5);
-		currentRect.setPosition(i * currentRect.getSize().x, m_bars.At(i));
-		m_mainWindow.draw(currentRect);
-	}
-
+	m_bars.Render();
 	m_mainWindow.draw(m_text);
 
 	m_mainWindow.display();
