@@ -1,27 +1,25 @@
-#include "Sorter.h"
+#include "Sorts.h"
 #include "Log.h"
 
-Sorter::Sorter(sf::RenderWindow *outputTarget)
+Sorts::Sorts(sf::RenderWindow &outputTarget)
 	: m_target(outputTarget)
 {
 }
 
-auto Sorter::Swap(Bars &bars, int previous, int next, bool usingStdSwap)
+auto Sorts::Swap(Bars &bars, int previous, int next, bool usingStdSwap)
 {
 	return [this, &bars, previous, next, usingStdSwap]()
 	{
 		if (usingStdSwap)
 		{
 			// std::swap
-			bars.UseStdSwap(previous, next);
-
-			m_utils.UpdateElements(bars, previous, next, *m_target);
-			m_utils.Sleep();
+			std::swap(bars[previous], bars[next]);
+			
+			m_utils.UpdateElements(bars, previous, next, m_target);
 		}
 		else
 		{
-			m_utils.UpdateElements(bars, previous, next, *m_target);
-			m_utils.Sleep();
+			m_utils.UpdateElements(bars, previous, next, m_target);
 		}
 	};
 }
@@ -39,27 +37,30 @@ auto Sorter::Swap(Bars &bars, int previous, int next, bool usingStdSwap)
 
 	Stable: Yes
 */
-void Sorter::BubbleSort(Bars &bars)
+void Sorts::BubbleSort(Bars &bars)
 {
 	// Flag for swapping element
 	bool isSwapped;
 
 	// The value will be decreased every time one element has been sorted
-	int unsortedElements = bars.Size();
+	int unsortedElements = bars.size();
 
 	do
 	{
 		// If there's at least two element are swapped, it will be true
 		isSwapped = false;
 
+		// Sound notification
+		sf::Sound sound(AssetManager::GetSoundBuffer("res/sounds/8-bit-collect-sound.wav"));
+		sound.play();
+
 		// Iterate through the array's element
 		for (int i = 0; i < unsortedElements - 1; i++)
 		{
-			if (bars.At(i) < bars.At(i + 1))
+			if (bars[i] < bars[i + 1])
 			{
 				auto swap = Swap(bars, i, i + 1, true);
 				swap();
-
 				isSwapped = true;
 			}
 		}
@@ -81,23 +82,27 @@ void Sorter::BubbleSort(Bars &bars)
 
 	In Place: Yes, it does not require extra space.
 */
-void Sorter::SelectionSort(Bars &bars)
+void Sorts::SelectionSort(Bars &bars)
 {
 	// Var to store the index of min value in each iteration
 	int minIndex;
 
 	// Interate until the n-1 elements
-	for (int i = 0; i < bars.Size() - 1; ++i)
+	for (int i = 0; i < bars.size() - 1; ++i)
 	{
 		// Set the first unsorted element as the min value
 		minIndex = i;
 
+		// Sound notification
+		sf::Sound sound(AssetManager::GetSoundBuffer("res/sounds/8-bit-collect-sound.wav"));
+		sound.play();
+
 		// Iterate through the unsorted elements only
-		for (int j = i + 1; j < bars.Size(); ++j)
+		for (int j = i + 1; j < bars.size(); ++j)
 		{
 			// Set the new min value, if the saved min value is higher than current 
 			// index value
-			if (bars.At(j) > bars.At(minIndex))
+			if (bars[j] > bars[minIndex])
 			{
 				minIndex = j;
 			}
@@ -127,7 +132,7 @@ void Sorter::SelectionSort(Bars &bars)
 
 	Stable: No, can be made stable by considering indexes as comparison parameter.
 */
-void Sorter::QuickSort(Bars &bars, int startIndex, int endIndex)
+void Sorts::QuickSort(Bars &bars, int startIndex, int endIndex)
 {
 	// Only perform sort process if the end index is higher than start index
 	if (startIndex < endIndex)
@@ -136,9 +141,13 @@ void Sorter::QuickSort(Bars &bars, int startIndex, int endIndex)
 		// of element that is already in correct position
 		int pivotIndex = Partition(bars, startIndex, endIndex);
 
+		// Sound notification
+		sf::Sound sound(AssetManager::GetSoundBuffer("res/sounds/8-bit-collect-sound.wav"));
+		sound.play();
+
 		// Sort left sublist arr[startIndex ... pivotIndex - 1]
 		QuickSort(bars, startIndex, pivotIndex - 1);
-
+		
 		// Sort right sublist arr[pivotIndex + 1 ... endIndex]
 		QuickSort(bars, pivotIndex + 1, endIndex);
 	}
@@ -158,13 +167,17 @@ void Sorter::QuickSort(Bars &bars, int startIndex, int endIndex)
 
 	Stable: Yes
 */
-void Sorter::InsertionSort(Bars &bars)
+void Sorts::InsertionSort(Bars &bars)
 {
 	// Iterate through all array's elements
-	for (int i = 0; i < bars.Size(); ++i)
+	for (int i = 0; i < bars.size(); ++i)
 	{
 		// Set the current element as reference value
-		int refValue = bars.At(i);
+		int refValue = bars[i];
+
+		// Sound notification
+		sf::Sound sound(AssetManager::GetSoundBuffer("res/sounds/8-bit-collect-sound.wav"));
+		sound.play();
 
 		// Var to shift the element to the right position
 		int j;
@@ -175,9 +188,9 @@ void Sorter::InsertionSort(Bars &bars)
 			// If the value of the current index is less than the reference value, then
 			// move the current value to right side.. otherwise, put the reference value in the 
 			// current index
-			if (bars.At(j) < refValue)
+			if (bars[j] < refValue)
 			{
-				bars.Move(j + 1, j);
+				bars[j + 1] = bars[j];
 
 				auto moveToRight = Swap(bars, i, j, false);
 				moveToRight();
@@ -188,17 +201,17 @@ void Sorter::InsertionSort(Bars &bars)
 			}
 		}
 		// Here's the line to put the reference value in the current index (the right position)
-		bars.Set(j + 1, refValue);
+		bars[j + 1] = refValue;
 
 		auto moveRefVal = Swap(bars, i, j, false);
 		moveRefVal();
 	}
 }
 
-int Sorter::Partition(Bars &bars, int startIndex, int endIndex)
+int Sorts::Partition(Bars &bars, int startIndex, int endIndex)
 {
 	// Set the first item as pivot
-	int pivot = bars.At(startIndex);
+	int pivot = bars[startIndex];
 
 	// Left sublist and right sublist are initially empty
 	int middleIndex = startIndex;
@@ -206,7 +219,7 @@ int Sorter::Partition(Bars &bars, int startIndex, int endIndex)
 	// Iterate through arr[1 ... n - 1]
 	for (int i = startIndex + 1; i <= endIndex; ++i)
 	{
-		if (bars.At(i) > pivot)
+		if (bars[i] > pivot)
 		{
 			// The current item is on the left sublist, prepare a seat by shifting middle index
 			++middleIndex;
