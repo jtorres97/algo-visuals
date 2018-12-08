@@ -1,19 +1,10 @@
 #include "Utils.h"
 #include "Log.h"
 
-namespace {
-	const sf::Uint32 s_sleepMsTime = 50;
-}
-
-Utils::~Utils()
-{
-}
-
 void Utils::UpdateElements(Bars &bars, int previous, int next, sf::RenderWindow &targetWindow)
 {
-	// Renders the updated array to the screen
-	sf::RectangleShape currentRect((sf::Vector2f(800 / static_cast<float>(bars.Size()), 540)));
-	for (int i = 0; i < bars.Size(); i++)
+	sf::RectangleShape currentRect((sf::Vector2f(targetWindow.getSize().x / static_cast<float>(bars.size()), targetWindow.getSize().y)));
+	for (int i = 0; i < bars.size(); i++)
 	{
 		currentRect.setFillColor(sf::Color::White);
 		currentRect.setOutlineColor(sf::Color::Black);
@@ -28,17 +19,11 @@ void Utils::UpdateElements(Bars &bars, int previous, int next, sf::RenderWindow 
 		{
 			currentRect.setFillColor(sf::Color::Red);
 		}
-		currentRect.setPosition(i * currentRect.getSize().x, bars.At(i));
+		currentRect.setPosition(i * currentRect.getSize().x, bars[i]);
 
 		targetWindow.draw(currentRect);
 	}
 
-	// Displays and clears the newly drawn array
 	targetWindow.display();
 	targetWindow.clear();
-}
-
-void Utils::Sleep()
-{
-	std::this_thread::sleep_for(std::chrono::milliseconds(s_sleepMsTime));
 }

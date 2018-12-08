@@ -7,13 +7,10 @@
 
 #include "Bars.h"
 
-class Utils
+struct Utils
 {
-public:
 	Utils() = default;
-	~Utils();
 
 	void UpdateElements(Bars &bars, int previous, int next, sf::RenderWindow &targetWindow);
-	void Sleep();
 };
 
