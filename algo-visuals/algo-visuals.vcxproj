@@ -131,6 +131,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Bars.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Sorts.h" />
     <ClInclude Include="Utils.h" />
