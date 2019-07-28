@@ -344,5 +344,7 @@ ASALocalRun/
 
 # bin
 *.dll
+build/
+bin/
 
 # End of https://www.gitignore.io/api/visualstudio
