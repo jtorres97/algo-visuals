@@ -1,5 +1,4 @@
 #include "Utils.h"
-#include "Log.h"
 
 void Utils::UpdateElements(Bars &bars, int previous, int next, sf::RenderWindow &targetWindow)
 {

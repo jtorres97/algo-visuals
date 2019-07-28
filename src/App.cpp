@@ -1,5 +1,6 @@
 ﻿#include "App.h"
-#include "Log.h"
+
+#include <iostream>
 
 AssetManager assetManager;
 
@@ -68,7 +69,7 @@ void App::ProcessEvents()
 		case sf::Event::KeyPressed:
 			if (event.key.code == sf::Keyboard::R)
 			{
-				LOG_INFO("Shuffling...");
+				std::cout<< "Shuffling...\n";
 				m_bars.Shuffle();
 				m_bars.SetSortStatus(false);
 			}

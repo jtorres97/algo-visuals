@@ -1,5 +1,4 @@
 #include "Sorts.h"
-#include "Log.h"
 
 Sorts::Sorts(sf::RenderWindow &outputTarget)
 	: m_target(outputTarget)

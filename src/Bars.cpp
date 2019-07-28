@@ -1,5 +1,4 @@
 #include "Bars.h"
-#include "Log.h"
 
 Bars::Bars(sf::RenderWindow &outputTarget, const int numElements)
 	: m_sorted(false)
