@@ -13,6 +13,8 @@ ENDIF()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
+file(COPY ${PROJECT_SOURCE_DIR}/res/ DESTINATION ${PROJECT_SOURCE_DIR}/bin/res/)
+
 # Add more as needed
 include_directories(${PROJECT_SOURCE_DIR}/includes)
 
