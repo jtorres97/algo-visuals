@@ -22,4 +22,4 @@ make
 Then navigate to the `/bin` directory and execute: `./Algo-Visuals`.
 
 # Acknowledgements
-Inspiration/idea for this project came from this [https://www.youtube.com/watch?v=67k3I2GxTH8](video).
+Inspiration/idea for this project came from this [video](https://www.youtube.com/watch?v=67k3I2GxTH8).
